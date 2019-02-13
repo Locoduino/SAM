@@ -6,11 +6,18 @@
  * Classe pour les messages CAN
  */
 
-#include "SatelliteConfig.h"
-#include "CANMessage.h"
-#include "mcp_can.h"
+#include "SAM.h"
 
-extern MCP_CAN canController;
+#include "mcp_can.h"
+#include "mcp_can_dfs.h"
+ 
+/*
+ * Interface CAN
+ */
+const uint8_t spiCS = 9;  // pour un Uno
+//const uint8_t spiCS = 53; // sur un Mega
+
+MCP_CAN canController(spiCS);
 
 AbstractCANOutSatelliteMessage::AbstractCANOutSatelliteMessage() :
   mSatelliteId(NO_SATELLITE_ID)

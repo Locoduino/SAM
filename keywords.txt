@@ -1,0 +1,54 @@
+#######################################
+# Syntax Coloring Map For Matrix
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+SAM	KEYWORD1
+PointWrapper	KEYWORD1
+SignalWrapper	KEYWORD1
+SemaphoreSignalWrapper	KEYWORD1
+CarreSignalWrapper	KEYWORD1
+SemaphoreRalentissementSignalWrapper	KEYWORD1
+CarreRappelRalentissementSignalWrapper	KEYWORD1
+typeFeux	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+begin	KEYWORD2
+loop	KEYWORD2
+setState	KEYWORD2
+setSignalState	KEYWORD2
+setPointPosition	KEYWORD2
+
+printOutBuffer	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+E	LITERAL1
+Vl	LITERAL1
+A	LITERAL1
+S	LITERAL1
+C	LITERAL1
+R	LITERAL1
+RR	LITERAL1
+M	LITERAL1
+Cv	LITERAL1
+Vlc	LITERAL1
+Ac	LITERAL1
+Sc	LITERAL1
+Rc	LITERAL1
+RRc	LITERAL1
+Mc	LITERAL1
+D	LITERAL1
+X	LITERAL1
+
+LED_ON	LITERAL1
+LED_OFF	LITERAL1
+LED_BLINK	LITERAL1

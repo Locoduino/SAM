@@ -9,10 +9,7 @@
  * CAN lui permettant de dialoguer avec les satellites.
  */
 
-#include "SatelliteConfig.h"
-#include "SatelliteWrapper.h"
-#include "CANMessage.h"
-#include "Feux.h"
+#include "SAM.h"
 
 /*
  * CAN messages

@@ -95,7 +95,7 @@ public:
 class SemaphoreSignalWrapper : public SignalWrapper
 {
 private:
-  virtual void setState(const uint16_t inState);
+  void setState(const uint16_t inState);
 
 public:
   SemaphoreSignalWrapper(const uint16_t inSignalNumber, const uint8_t inSatelliteId, const uint8_t inSlot) :
@@ -108,7 +108,7 @@ public:
 class CarreSignalWrapper : public SignalWrapper
 {
 private:
-  virtual void setState(const uint16_t inState);
+  void setState(const uint16_t inState);
 
 public:
   CarreSignalWrapper(const uint16_t inSignalNumber, const uint8_t inSatelliteId, const uint8_t inSlot) :
@@ -121,7 +121,7 @@ public:
 class SemaphoreRalentissementSignalWrapper : public SignalWrapper
 {
 private:
-  virtual void setState(const uint16_t inState);
+  void setState(const uint16_t inState);
 
 public:
   SemaphoreRalentissementSignalWrapper(const uint16_t inSignalNumber, const uint8_t inSatelliteId, const uint8_t inSlot) :
@@ -134,7 +134,7 @@ public:
 class CarreRappelRalentissementSignalWrapper : public SignalWrapper
 {
 private:
-  virtual void setState(const uint16_t inState);
+  void setState(const uint16_t inState);
 
 public:
   CarreRappelRalentissementSignalWrapper(const uint16_t inSignalNumber, const uint8_t inSatelliteId, const uint8_t inSlot) :
