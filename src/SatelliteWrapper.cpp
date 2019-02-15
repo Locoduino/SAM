@@ -11,14 +11,6 @@
 
 #include "SAM.h"
 
-/*
- * CAN messages
- */
-AbstractCANOutSatelliteMessage outSatellitesMessages[NUMBER_OF_SATELLITES];
-
-static const uint8_t NO_MESSAGE_INDEX = 255;
-static const uint8_t NO_SATELLITE_INDEX = 255;
-
 /* Envoi du message courant à destination des satellites */
 void sendSatelliteMessage()
 {
@@ -28,7 +20,7 @@ void sendSatelliteMessage()
   if (millis() > sendDate) {
     sendDate += OUT_MESSAGE_PERIOD;
 
-    outSatellitesMessages[messageIndex].send();
+    AbstractCANOutSatelliteMessage::outSatellitesMessages[messageIndex].send();
 
     /* passe au message suivant */
     messageIndex++;
@@ -41,7 +33,7 @@ void printOutBuffers()
   for (uint8_t i = 0; i < 43; i++) Serial.print('-');
   Serial.println();
   for (uint8_t i = 0; i < NUMBER_OF_SATELLITES; i++) {
-    outSatellitesMessages[i].println();
+    AbstractCANOutSatelliteMessage::outSatellitesMessages[i].println();
   }
   for (uint8_t i = 0; i < 43; i++) Serial.print('-');
   Serial.println();
@@ -54,8 +46,8 @@ void printOutBuffers()
 static uint8_t lookupMessageForId(const uint8_t inSatelliteId)
 {
   for (uint8_t messIdx = 0; messIdx < NUMBER_OF_SATELLITES; messIdx++) {
-    if (outSatellitesMessages[messIdx].satelliteId() == inSatelliteId ||
-        outSatellitesMessages[messIdx].satelliteId() == NO_SATELLITE_ID)
+    if (AbstractCANOutSatelliteMessage::outSatellitesMessages[messIdx].satelliteId() == inSatelliteId ||
+        AbstractCANOutSatelliteMessage::outSatellitesMessages[messIdx].satelliteId() == NO_SATELLITE_ID)
     {
       return messIdx;
     }
@@ -131,7 +123,7 @@ void PointWrapper::setPointPosition(
 void PointWrapper::setPosition(const bool inPosition)
 {
   if (mSatelliteIndex != NO_MESSAGE_INDEX) {
-    outSatellitesMessages[mSatelliteIndex].setPointPosition(inPosition);
+    AbstractCANOutSatelliteMessage::outSatellitesMessages[mSatelliteIndex].setPointPosition(inPosition);
   }
 }
 
@@ -139,7 +131,7 @@ void PointWrapper::lookupMessage()
 {
   mSatelliteIndex = lookupMessageForId(mSatelliteId);
   if (mSatelliteIndex != NO_MESSAGE_INDEX) {
-    outSatellitesMessages[mSatelliteIndex].reserve(mSatelliteId);
+    AbstractCANOutSatelliteMessage::outSatellitesMessages[mSatelliteIndex].reserve(mSatelliteId);
   }
 }
 
@@ -155,7 +147,7 @@ void SignalWrapper::lookupMessage()
 {
   mSatelliteIndex = lookupMessageForId(mSatelliteId);
   if (mSatelliteIndex != NO_MESSAGE_INDEX) {
-    outSatellitesMessages[mSatelliteIndex].reserve(mSatelliteId);
+    AbstractCANOutSatelliteMessage::outSatellitesMessages[mSatelliteIndex].reserve(mSatelliteId);
   }
 }
 
@@ -206,90 +198,4 @@ mSlot(inSlot)
   if (mSignalNumber > sHigherSignalNumber) sHigherSignalNumber = mSignalNumber;
 }
 
-/*-----------------------------------------------------------------------------
- * Wrapper pour les sémaphores : 3 feux, jaune, rouge, vert
- *
- * L'ordre des LED sur le satellite est :
- * - jaune
- * - rouge
- * - vert
- */
-void SemaphoreSignalWrapper::setState(const uint16_t inState)
-{
-  if (mSatelliteIndex != NO_MESSAGE_INDEX) {
-    AbstractCANOutSatelliteMessage &message = outSatellitesMessages[mSatelliteIndex];
-    message.setLED(mSlot, inState & A ? LED_ON : LED_OFF);      /* jaune */
-    message.setLED(mSlot + 1, inState & S ? LED_ON : LED_OFF);  /* rouge */
-    message.setLED(mSlot + 2, inState & Vl ? LED_ON : LED_OFF); /* vert  */
-  }
-}
 
-/*-----------------------------------------------------------------------------
- * Wrapper pour les carrés
- *
- * L'ordre des LED sur le satellite est :
- * - jaune
- * - rouge
- * - vert
- * - rouge2
- * - oeilleton (blanc)
- */
-void CarreSignalWrapper::setState(const uint16_t inState)
-{
-  if (mSatelliteIndex != NO_MESSAGE_INDEX) {
-    AbstractCANOutSatelliteMessage &message = outSatellitesMessages[mSatelliteIndex];
-    message.setLED(mSlot, inState & A ? LED_ON : LED_OFF);        /* jaune */
-    message.setLED(mSlot + 1, inState & S ? LED_ON : inState & C ? LED_ON : LED_OFF);    /* rouge */
-    message.setLED(mSlot + 2, inState & Vl ? LED_ON : LED_OFF);   /* vert  */
-    message.setLED(mSlot + 3, inState & C ? LED_ON : LED_OFF);    /* rouge2 */
-    message.setLED(mSlot + 4, inState & C ? LED_OFF : inState ? LED_ON : LED_OFF); /* oeilleton */
-  }
-}
-
-/*-----------------------------------------------------------------------------
- * Wrapper pour les s&maphores avec ralentissement
- *
- * L'ordre des LED sur le satellite est :
- * - jaune
- * - rouge
- * - vert
- * - jaune2
- * - jaune3
- */
-void SemaphoreRalentissementSignalWrapper::setState(const uint16_t inState)
-{
-  if (mSatelliteIndex != NO_MESSAGE_INDEX) {
-    AbstractCANOutSatelliteMessage &message = outSatellitesMessages[mSatelliteIndex];
-    message.setLED(mSlot, inState & A ? LED_ON : LED_OFF);      /* jaune */
-    message.setLED(mSlot + 1, inState & S ? LED_ON : LED_OFF);  /* rouge */
-    message.setLED(mSlot + 2, inState & Vl ? LED_ON : LED_OFF); /* vert  */
-    message.setLED(mSlot + 3, inState & R ? LED_ON : inState & Rc ? LED_BLINK : LED_OFF);  /* jaune2 */
-    message.setLED(mSlot + 4, inState & R ? LED_ON : inState & Rc ? LED_BLINK : LED_OFF);  /* jaune3 */
-  }
-}
-
-/*-----------------------------------------------------------------------------
- * Wrapper pour les carrés avec rappel ralentissement
- *
- * L'ordre des LED sur le satellite est :
- * - jaune
- * - rouge
- * - vert
- * - rouge2
- * - jaune2
- * - jaune3
- * - oeilleton
- */
-void CarreRappelRalentissementSignalWrapper::setState(const uint16_t inState)
-{
-  if (mSatelliteIndex != NO_MESSAGE_INDEX) {
-    AbstractCANOutSatelliteMessage &message = outSatellitesMessages[mSatelliteIndex];
-    message.setLED(mSlot, inState & A ? LED_ON : LED_OFF);      /* jaune */
-    message.setLED(mSlot + 1, inState & C ? LED_ON : LED_OFF);  /* rouge */
-    message.setLED(mSlot + 2, inState & Vl ? LED_ON : LED_OFF); /* vert  */
-    message.setLED(mSlot + 3, inState & C ? LED_ON : LED_OFF);  /* rouge2 */
-    message.setLED(mSlot + 4, inState & RR ? LED_ON : inState & RRc ? LED_BLINK : LED_OFF);  /* jaune2 */
-    message.setLED(mSlot + 5, inState & RR ? LED_ON : inState & RRc ? LED_BLINK : LED_OFF);  /* jaune3 */
-    message.setLED(mSlot + 6, inState & C ? LED_OFF : inState ? LED_ON : LED_OFF); /* oeilleton */
-  }
-}

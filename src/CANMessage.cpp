@@ -14,10 +14,16 @@
 /*
  * Interface CAN
  */
-const uint8_t spiCS = 9;  // pour un Uno
-//const uint8_t spiCS = 53; // sur un Mega
 
-MCP_CAN canController(spiCS);
+#if defined(__AVR_ATmega2560__)
+#define SPI_CS_PIN 53
+#elif defined(__AVR_ATmega328P__)
+#define SPI_CS_PIN 9
+#endif
+
+MCP_CAN canController(SPI_CS_PIN);
+
+AbstractCANOutSatelliteMessage AbstractCANOutSatelliteMessage::outSatellitesMessages[];
 
 AbstractCANOutSatelliteMessage::AbstractCANOutSatelliteMessage() :
   mSatelliteId(NO_SATELLITE_ID)

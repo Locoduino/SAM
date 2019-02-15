@@ -11,8 +11,6 @@
 
 #include "Arduino.h"
 
-const uint8_t NO_SATELLITE_ID = 255;
-
 class AbstractCANOutSatelliteMessage
 {
 private:
@@ -29,6 +27,11 @@ public:
   void print();
   void println() { print(); Serial.println(); }
   void send();
+
+	/*
+ 	* CAN messages
+ 	*/
+	static AbstractCANOutSatelliteMessage outSatellitesMessages[NUMBER_OF_SATELLITES];
 };
 
 #endif

@@ -7,6 +7,8 @@
  * Les satellites
  */
 #include "SAM.h"
+#include "SignalFr.h"
+
 
 /*
  *  Les aiguillages
